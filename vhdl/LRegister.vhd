@@ -4,7 +4,8 @@ entity LRegister is
         shiftL : in bit;
         load : in bit;
         d0, d1, d2, d3, d4, d5, d6, d7 : in bit;
-        q0, q1, q2, q3, q4, q5, q6, q7 : out bit);
+        q0, q1, q2, q3, q4, q5, q6, q7 : out bit
+    );
 end LRegister;
 
 architecture default of LRegister is
