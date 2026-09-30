@@ -4,9 +4,5 @@ end and2;
 
 architecture basic of and2 is
 begin
-    and2_behaviour : process is
-    begin
-        y <= a and b;
-        wait on a, b;
-    end process and2_behaviour;
+    y <= a and b;
 end architecture basic;
