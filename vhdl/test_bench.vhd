@@ -253,3 +253,37 @@ begin
         wait;
     end process stimulus;
 end test_logicOR;
+
+entity tb_mux21_1bit is
+end tb_mux21_1bit;
+
+architecture test_mux21_1bit of tb_mux21_1bit is
+    component mux21_1bit is
+        port (
+            d0, d1 : in bit;
+            sel : in bit;
+            y : out bit
+        );
+    end component;
+    signal d0_in, d1_in, sel_in, y_out : bit;
+begin
+    u_mux21_1bit : mux21_1bit port map(
+        d0 => d0_in,
+        d1 => d1_in,
+        sel => sel_in,
+        y => y_out
+    );
+    stimulus : process is
+    begin
+        d0_in <= '0'; d1_in <= '0'; sel_in <= '0'; wait for 20 ns;
+        d0_in <= '0'; d1_in <= '1'; sel_in <= '0'; wait for 20 ns;
+        d0_in <= '1'; d1_in <= '0'; sel_in <= '0'; wait for 20 ns;
+        d0_in <= '1'; d1_in <= '1'; sel_in <= '0'; wait for 20 ns;
+        d0_in <= '0'; d1_in <= '0'; sel_in <= '1'; wait for 20 ns;
+        d0_in <= '0'; d1_in <= '1'; sel_in <= '1'; wait for 20 ns;
+        d0_in <= '1'; d1_in <= '0'; sel_in <= '1'; wait for 20 ns;
+        d0_in <= '1'; d1_in <= '1'; sel_in <= '1'; wait for 20 ns;
+        wait;
+    end process stimulus;
+end test_mux21_1bit;
+
