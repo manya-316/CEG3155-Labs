@@ -16,8 +16,8 @@ architecture basic of logicOR is
 begin
     gen_or8: for i in 0 to 7 generate
         u_bit: or2 port map (
-            a  => d0(i),
-            b  => d1(i),
+            a  => a(i),
+            b  => b(i),
             y   => y(i)
         );
     end generate gen_or8;
