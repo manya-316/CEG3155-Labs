@@ -1,48 +1,65 @@
 entity DisplayRegister is
     port (
-        clk : in bit;
-        reset : in bit;
-        load : in bit;
-        d0, d1, d2, d3, d4, d5, d6, d7 : in bit;
-        q0, q1, q2, q3, q4, q5, q6, q7 : out bit
+        clk, reset, loadD, resetD : in bit;
+        d : in bit_vector(7 downto 0);
+        q : out bit_vector(7 downto 0)
     );
 end DisplayRegister;
 
-architecture default of DisplayRegister is
-    storage : process is 
-        variable stored_d0, stored_d1, stored_d2, stored_d3, stored_d4, stored_d5, stored_d6, stored_d7 : bit;
-    begin
-        if clk = '1' then
-            if load = '1' then
-                stored_d0 := d0;
-                stored_d1 := d1;
-                stored_d2 := d2;
-                stored_d3 := d3;
-                stored_d4 := d4;
-                stored_d5 := d5;
-                stored_d6 := d6;
-                stored_d7 := d7;
-            elsif reset = '1' then
-                stored_d0 := '0';
-                stored_d1 := '0';
-                stored_d2 := '0';
-                stored_d3 := '0';
-                stored_d4 := '0';
-                stored_d5 := '0';
-                stored_d6 := '0';
-                stored_d7 := '0';
-            end if;
-        end if;
+architecture basic of DisplayRegister is
+    component mux21_1bit is
+        port (
+            d0, d1 : in bit;
+            sel : in bit;
+            y : out bit
+        );
+    end component;
+    component and2 is
+        port (
+            a, b : in bit;
+            y : out bit
+        );
+    end component;
+    component not_gate is
+        port (
+            a : in bit;
+            y : out bit
+        );
+    end component;
+    component dflipflop is
+        port (
+            clk, reset, set, d : in bit;
+            q : out bit
+        );
+    end component;
 
-        q0 <= stored_d0;
-        q1 <= stored_d1;
-        q2 <= stored_d2;
-        q3 <= stored_d3;
-        q4 <= stored_d4;
-        q5 <= stored_d5;
-        q6 <= stored_d6;
-        q7 <= stored_d7;
+    signal q_int, next_q, after_load : bit_vector(7 downto 0);
+    signal resetD_n : bit;
+begin
+    u_inv : not_gate port map (
+        a => resetD,
+        y => resetD_n
+    );
+    gen_bits : for i in 0 to 7 generate
+        u_load : mux21_1bit port map (
+            d0 => q_int(i),
+            d1 => d(i),
+            sel => loadD,
+            y => after_load(i)
+        );
+        u_ff : dflipflop port map (
+            clk => clk,
+            reset => reset,
+            set => '0',
+            d => next_q(i),
+            q => q_int(i)
+        );
+        u_clr: and2 port map (
+            a => after_load(i),
+            b => resetD_n,
+            y => next_q(i)
+        );
+    end generate gen_bits;
 
-        wait on clk, d0, d1, d2, d3, d4, d5, d6, d7, load, reset;
-    end process storage;
-end architecture default;
+    q <= q_int;
+end basic;
