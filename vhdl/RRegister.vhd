@@ -22,7 +22,7 @@ architecture basic of RRegister is
         );
     end component;
 
-    signal q_int, shift_in, after_shift : bit_vector(7 downto 0);
+    signal q_int, shift_in, after_shift, next_q : bit_vector(7 downto 0);
 begin 
     shift_in(7) <= q_int(0);
     shift_in(6 downto 0) <= q_int(7 downto 1);
