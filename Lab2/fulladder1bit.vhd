@@ -1,7 +1,7 @@
 entity fulladder1bit is
     port (
         a, b, cin : in bit;
-        s, c : out bit
+        s, cout : out bit
     );
 end fulladder1bit;
 
@@ -41,6 +41,6 @@ begin
 
     -- OR gates for carry output
     u_or1 : or2 port map(a => inter_and1, b => inter_and2, y => inter_or);
-    u_or2 : or2 port map(a => inter_or, b => inter_and3, y => c);
+    u_or2 : or2 port map(a => inter_or, b => inter_and3, y => cout);
 
 end basic;
