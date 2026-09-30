@@ -101,4 +101,5 @@ begin
         a => tick_int,
         y => tick_n
     );
+    clk_out <= tick_int;
 end basic;
