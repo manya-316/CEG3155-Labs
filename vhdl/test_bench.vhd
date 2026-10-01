@@ -549,10 +549,10 @@ begin
         reset_in <= '1'; wait for 20 ns;
         reset_in <= '0';
         left_in <= '1'; right_in <= '0'; wait for 400 ns;
-        left_in <= '0'; right_in <= '1'; wait for 240 ns;
-        left_in <= '1'; right_in <= '1'; wait for 360 ns;
-        left_in <= '0'; right_in <= '0'; wait for 120 ns;
-        left_in <= '1'; right_in <= '0'; wait for 120 ns;
+        left_in <= '0'; right_in <= '1'; wait for 400 ns;
+        left_in <= '1'; right_in <= '1'; wait for 400 ns;
+        left_in <= '0'; right_in <= '0'; wait for 400 ns;
+        left_in <= '1'; right_in <= '0'; wait for 400 ns;
         done <= true;
 
         wait;
