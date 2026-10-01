@@ -1,3 +1,7 @@
+-- LRegister.vhd
+-- This entity is an 8-bit register with left-shift functionality,
+-- designed to be used for the left shifting component of this system.
+
 entity LRegister is
     port (
         clk, reset, shiftL, load : in bit;

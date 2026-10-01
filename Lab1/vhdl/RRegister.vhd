@@ -1,3 +1,7 @@
+-- RRegister.vhd
+-- This entity is an 8-bit register with right-shift functionality,
+-- designed to be used for the right shifting component of this system.
+
 entity RRegister is
     port (
         clk, reset, shiftR, load : in bit;

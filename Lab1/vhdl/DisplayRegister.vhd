@@ -1,3 +1,7 @@
+-- DisplayRegister.vhd
+-- This entity is an 8-bit register with reset functionality,
+-- designed to be used for the display section of this system.
+
 entity DisplayRegister is
     port (
         clk, reset, loadD, resetD : in bit;

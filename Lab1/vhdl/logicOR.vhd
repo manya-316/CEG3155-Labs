@@ -1,3 +1,8 @@
+-- logicOR.vhd
+-- this entity is an 8-bit logical OR operation,
+-- whose output is the result of a bitwise OR
+-- between the inputs a and b
+
 entity logicOR is
     port (
         a : in bit_vector(7 downto 0);
