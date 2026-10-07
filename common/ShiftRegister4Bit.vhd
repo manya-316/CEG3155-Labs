@@ -28,7 +28,7 @@ architecture basic of ShiftRegister4Bit is
 
     signal q_int, shift_L_int, shift_R_int, after_shift, next_q : bit_vector(3 downto 0);
 begin 
-    shift_L_int(0) <= q_int(7);
+    shift_L_int(0) <= q_int(3);
     shift_L_int(3 downto 1) <= q_int(2 downto 0);
 
     shift_R_int(3) <= q_int(0);
