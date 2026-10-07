@@ -8,7 +8,7 @@ entity rippleaddsub4bit is
 end rippleaddsub4bit;
 
 architecture basic of rippleaddsub4bit is
-    component rippleadder8bit is
+    component rippleadder4bit is
         port (
             a, b : in bit_vector(3 downto 0);
             cin : in bit;
