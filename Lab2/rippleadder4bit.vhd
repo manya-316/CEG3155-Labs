@@ -1,13 +1,13 @@
-entity rippleadder8bit is
+entity rippleadder4bit is
     port (
-        a, b : in bit_vector(7 downto 0);
+        a, b : in bit_vector(3 downto 0);
         cin : in bit;
-        s : out bit_vector(7 downto 0);
+        s : out bit_vector(3 downto 0);
         cout : out bit
     );
-end rippleadder8bit;
+end rippleadder4bit;
 
-architecture basic of rippleadder8bit is
+architecture basic of rippleadder4bit is
 
     component fulladder1bit is
         port (
@@ -15,13 +15,13 @@ architecture basic of rippleadder8bit is
             s, cout : out bit
         );
     end component;
-    signal c_chain : bit_vector(8 downto 0);
+    signal c_chain : bit_vector(4 downto 0);
 begin
 
     c_chain(0) <= cin;
-    cout       <= c_chain(8);
+    cout       <= c_chain(4);
 
-    gen_adders : for i in 0 to 7 generate
+    gen_adders : for i in 0 to 3 generate
         fa_inst : fulladder1bit port map (
             a    => a(i),
             b    => b(i),
