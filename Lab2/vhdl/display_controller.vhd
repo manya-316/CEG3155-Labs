@@ -1,4 +1,4 @@
--display controller builds a 7-segment display driver for the DE2 board. It takes 8 4-bit inputs (d0..d7) and an 8-bit blanking input, and multiplexes them onto the 7-segment display. The refresh rate is set to about 100 Hz.
+--display controller builds a 7-segment display driver for the DE2 board. It takes 8 4-bit inputs (d0..d7) and an 8-bit blanking input, and multiplexes them onto the 7-segment display. The refresh rate is set to about 100 Hz.
 entity display_controller is
     port (
         clk100 : in bit;
