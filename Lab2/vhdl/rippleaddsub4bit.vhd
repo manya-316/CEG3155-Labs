@@ -1,3 +1,4 @@
+--4-bit adder/subtractor (pre-lab, lab Figure 6)
 entity rippleaddsub4bit is
     port (
         a, b : in bit_vector(3 downto 0);

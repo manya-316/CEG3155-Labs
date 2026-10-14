@@ -1,3 +1,4 @@
+--Rising-edge D flip-flop with asynchronous clear and preset.
 entity dff is 
     port (
         clk, clr, pre, d: in bit;

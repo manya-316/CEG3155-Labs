@@ -1,3 +1,4 @@
+--1-bit 2-to-1 multiplexer built structurally from gates.
 entity bitmux21 is
     port (
         d0, d1, sel: in bit;

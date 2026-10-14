@@ -1,3 +1,4 @@
+--Control path for the 4-bit multiplier. The control path is a finite state machine that generates the control signals for the datapath. The FSM has three states: S0, S1, and S2. The FSM transitions from S0 to S1 when the reset signal is deasserted. The FSM transitions from S1 to S2 when the counter reaches zero. The FSM transitions from S2 to S0 when the done signal is asserted.
 entity multiplier_controlpath is 
     port (
         clk, reset : in bit;
