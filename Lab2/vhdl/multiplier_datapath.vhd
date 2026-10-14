@@ -47,7 +47,8 @@ architecture struct of multiplier_datapath is
             a, b : in bit_vector(7 downto 0);
             sub : in bit;
             s : out bit_vector(7 downto 0);
-            cout : out bit
+            cout : out bit;
+            ovf : out bit
         );
     end component;
 
@@ -60,15 +61,23 @@ architecture struct of multiplier_datapath is
         );
     end component;
 
+    component or2 is
+        port (
+            a, b : in bit;
+            y : out bit
+        );
+    end component;
+
     signal extA : bit_vector(7 downto 0);
     signal regA_out : bit_vector(7 downto 0);
     signal regB_out : bit_vector(3 downto 0);
     signal sum_result : bit_vector(7 downto 0);
     signal prod_reg : bit_vector(7 downto 0);
+    signal p_reset : bit;
 
 begin
 
-    extA <= "0000" & a;
+    extA <= a(3) & a(3) & a(3) & a(3) & a;
 
     regA : ShiftRegister8Bit
         port map (
@@ -118,7 +127,7 @@ begin
             reset => reset,
             load => loadCtr,
             dec => dec,
-            d => "0100",
+            d => "0011",
             zero => ctr_zero
         );
 

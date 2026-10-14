@@ -24,7 +24,6 @@ architecture basic of fulladder1bit is
             y : out bit
         );
     end component;
-
     signal inter_xor : bit;
     signal inter_and1, inter_and2, inter_and3 : bit;
     signal inter_or : bit;
@@ -42,5 +41,6 @@ begin
     -- OR gates for carry output
     u_or1 : or2 port map(a => inter_and1, b => inter_and2, y => inter_or);
     u_or2 : or2 port map(a => inter_or, b => inter_and3, y => cout);
+
 
 end basic;

@@ -3,7 +3,8 @@ entity rippleadder4bit is
         a, b : in bit_vector(3 downto 0);
         cin : in bit;
         s : out bit_vector(3 downto 0);
-        cout : out bit
+        cout : out bit;
+        ovf : out bit
     );
 end rippleadder4bit;
 
@@ -13,6 +14,12 @@ architecture basic of rippleadder4bit is
         port (
             a, b, cin : in bit;
             s, cout : out bit
+        );
+    end component;
+    component xor2 is
+        port (
+            a, b : in bit;
+            y : out bit
         );
     end component;
     signal c_chain : bit_vector(4 downto 0);
@@ -30,5 +37,11 @@ begin
             cout => c_chain(i + 1)
         );
     end generate gen_adders;
+
+    ovf_xor : xor2 port map (
+        a => c_chain(4),
+        b => c_chain(3),
+        y => ovf
+    );
 
 end basic;

@@ -1,9 +1,10 @@
 entity rippleaddsub4bit is
     port (
-        a, b : in bit_vector(7 downto 0);
+        a, b : in bit_vector(3 downto 0);
         sub : in bit;
-        s : out bit_vector(7 downto 0);
-        cout : out bit
+        s : out bit_vector(3 downto 0);
+        cout : out bit;
+        ovf : out bit
     );
 end rippleaddsub4bit;
 
@@ -13,7 +14,8 @@ architecture basic of rippleaddsub4bit is
             a, b : in bit_vector(3 downto 0);
             cin : in bit;
             s : out bit_vector(3 downto 0);
-            cout : out bit
+            cout : out bit;
+            ovf : out bit
         );
     end component;
     component xor2 is
@@ -39,7 +41,8 @@ begin
         b => b_xor_sub,
         cin => sub,
         s => s,
-        cout => cout
+        cout => cout,
+        ovf => ovf
     );
 
 end basic;
