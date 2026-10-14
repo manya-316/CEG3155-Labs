@@ -73,7 +73,6 @@ architecture struct of multiplier_datapath is
     signal regB_out : bit_vector(3 downto 0);
     signal sum_result : bit_vector(7 downto 0);
     signal prod_reg : bit_vector(7 downto 0);
-    signal p_reset : bit;
 
 begin
 
@@ -109,7 +108,8 @@ begin
             b => regA_out,
             sub => sub,
             s => sum_result,
-            cout => open
+            cout => open,
+            ovf => open
         );
 
     regP : Reg8Bit
