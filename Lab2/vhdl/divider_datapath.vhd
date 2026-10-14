@@ -1,268 +1,148 @@
+-- divider datapath for 4-bit divider
 entity divider_datapath is
     port (
         clk, reset : in bit;
-        resetQ, loadA, loadB, loadCtr, initR: in bit;
-        loadXs, shiftLA, shiftLQ, dec, loadT, loadR, loadNeg : in bit;
+        initR, loadT, loadR : in bit;
+        loadA, shiftLA : in bit;
+        loadB : in bit;
+        resetQ, shiftLQ, loadNeg : in bit;
+        loadXs : in bit;
+        loadCtr, dec : in bit;
         a, b : in bit_vector(3 downto 0);
-        Z, OK : out bit;
-        remOut, qOut : out bit_vector(3 downto 0)
+        ok : out bit;
+        ctr_zero : out bit;
+        signs_differ : out bit;
+        quotient : out bit_vector(3 downto 0);
+        remainder : out bit_vector(3 downto 0)
     );
 end divider_datapath;
 
-
 architecture struct of divider_datapath is
-    component dff is
-        port (
-            clk, clr, pre, d: in bit;
-            q: out bit
-        );
-    end component;
-
-    component Reg4Bit is
-        port (
-            clk, reset : in bit;
-            load : in bit;
-            d : in bit_vector(3 downto 0);
-            q : out bit_vector(3 downto 0)
-        );
-    end component;
-
-    component DownCounter4Bit is
-        port (
-            clk, reset : in bit;
-            load, dec : in bit;
-            d : in bit_vector(3 downto 0);
-            zero : out bit
-        );
-    end component;
-
     component ShiftRegister4Bit is
         port (
-            clk, reset, shiftL, shiftR, load : in bit;
-            d : in bit_vector(3 downto 0);
+            clk, reset : in bit; 
+            shiftL, shiftR, load : in bit;
+            d : in bit_vector(3 downto 0); 
             q : out bit_vector(3 downto 0)
-        );
+            );
     end component;
-
-    component bitmux21 is
+    component Reg4Bit is
         port (
-            d0, d1, sel: in bit;
-            y: out bit
-        );
+            clk, reset : in bit; 
+            load : in bit;
+            d : in bit_vector(3 downto 0); 
+            q : out bit_vector(3 downto 0)
+            );
     end component;
-
-    component mux31_4bit is
-        port (
-            d0, d1, d2 : in bit_vector(3 downto 0);
-            s0, s1 : in bit;
-            x : out bit_vector(3 downto 0)
-        );
-    end component;
-
     component rippleaddsub4bit is
         port (
-            a, b : in bit_vector(3 downto 0);
+            a, b : in bit_vector(3 downto 0); 
             sub : in bit;
-            s : out bit_vector(3 downto 0);
-            cout : out bit;
+            s : out bit_vector(3 downto 0); 
+            cout : out bit; 
             ovf : out bit
-        );
+            );
     end component;
-
-    component and2 is
+    component DownCounter4Bit is
         port (
-            a, b : in bit;
-            y : out bit
-        );
+            clk, reset : in bit; 
+            load, dec : in bit;
+            d : in bit_vector(3 downto 0); 
+            zero : out bit);
     end component;
-
-    component xor2 is port (
-            a, b : in bit;
-            y : out bit
-        );
-    end component;
-
-    component or2 is port (
-            a, b : in bit;
-            y : out bit
-        );
-    end component;
-    
-    component nor4 is
+    component dff is
         port (
-            a, b, c, d : in bit;
-            y : out bit
-        );
+            clk, clr, pre, d : in bit; 
+            q : out bit
+            );
     end component;
-    -- op registers
-    signal opA_out, opB_out : bit_vector(3 downto 0);
+    component bitmux21 is
+        port (
+            d0, d1, sel : in bit; 
+            y : out bit
+            );
+    end component;
+    component and2 is 
+        port (
+            a, b : in bit; 
+            y : out bit
+            );
+    end component;
+    component or2 is 
+        port (
+            a, b : in bit; 
+            y : out bit
+            );
+    end component;
+    component xor2 is 
+        port (
+            a, b : in bit; 
+            y : out bit
+            );
+    end component;
 
-    -- X
-    signal Xs_inp : bit;
-    signal Xs : bit; -- single bit reg, stores opA_out(3)
-
-    -- quotient storage
-    signal quotient_out : bit_vector(3 downto 0);
-    signal quotient_neg : bit_vector(3 downto 0);
-    signal quotient_shifted : bit_vector(3 downto 0);
-    signal quotient_inp : bit_vector(3 downto 0);
-
-    -- adder in/out
-    signal r_prime : bit_vector(3 downto 0);
-    signal T : bit_vector(3 downto 0);
-    signal Ts, Zt, Zd : bit; -- idk what these are lol
-    signal V : bit; -- this is overflow out
-
-    -- OK signal
-    signal in_OK : bit;
-    signal or_inp1, or_inp2, or_int, and2_out : bit;
-
-    -- counter
-    signal in_Z : bit; -- counter zero flag
-
-    -- remainder
-    signal rem_input, rem_out : bit_vector(3 downto 0);
-    signal signExtA : bit_vector(3 downto 0);
-
-    -- helpers
-    signal not_Xs, not_Ts : bit;
-    signal loadNeg_or_shiftLQ, Xs_xnor_opB3 : bit;
-    signal load_rem : bit;
-
+    signal opa, opb, rem_q, quo_q : bit_vector(3 downto 0);
+    signal r_shift, t, neg_q : bit_vector(3 downto 0);
+    signal rem_mux1, rem_d, quo_shift, quo_d : bit_vector(3 downto 0);
+    signal sext : bit_vector(3 downto 0);
+    signal xs, xs_d, sub, xs_xor_b3, v : bit;
+    signal ts, not_ts, t01, t23, t_any, zt, d01, d_any, zd, zt_zd, ok1, ok_int : bit;
+    signal rem_load1, rem_load, quo_load, quo_reset : bit;
 begin
-    -- Output assignments
-    remOut <= rem_out;
-    qOut   <= quotient_out;
-    Z      <= in_Z;
-    OK     <= in_OK;
+    regB : Reg4Bit port map(clk => clk, reset => reset, load => loadB, d => b, q => opb);
 
-    r_prime <= rem_out(2 downto 0) & opA_out(3);
+    regA : ShiftRegister4Bit port map(clk => clk, reset => reset, shiftL => shiftLA,
+        shiftR => '0', load => loadA, d => a, q => opa);
 
-    Ts_xor : xor2 port map (
-        a => T(3), b => V,
-        y => Ts
-    );
+    xs_mux : bitmux21 port map(d0 => xs, d1 => a(3), sel => loadXs, y => xs_d);
+    xs_ff  : dff port map(clk => clk, clr => reset, pre => '0', d => xs_d, q => xs);
 
-    zero_gate : nor4 port map (
-        a => T(3), b => T(2), c => T(1), d => T(0),
-        y => Zt
-    );
+    r_shift <= rem_q(2 downto 0) & opa(3);
 
-    zero_d_gate : nor4 port map (
-        a => '0', b => opA_out(2), c => opA_out(1), d => opA_out(0),
-        y => Zd
-    );
+    x1 : xor2 port map(a => xs, b => opb(3), y => xs_xor_b3);
+    x2 : xor2 port map(a => xs_xor_b3, b => '1', y => sub);
+    signs_differ <= xs_xor_b3;
 
-    signExtA(3) <= opA_out(3);
-    signExtA(2) <= opA_out(3);
-    signExtA(1) <= opA_out(3);
-    signExtA(0) <= opA_out(3);
+    addsub1 : rippleaddsub4bit port map(a => r_shift, b => opb, sub => sub,
+        s => t, cout => open, ovf => v);
 
-    -- Concurrent helper assignments
-    not_Xs             <= not Xs;
-    not_Ts             <= not Ts;
-    loadNeg_or_shiftLQ <= loadNeg or shiftLQ;
-    Xs_xnor_opB3       <= rem_out(3) xnor opB_out(3);
-    load_rem           <= initR or loadR or loadT;
+    x3 : xor2 port map(a => t(3), b => v, y => ts);
+    x4 : xor2 port map(a => ts, b => '1', y => not_ts);
+    o1 : or2  port map(a => t(0), b => t(1), y => t01);
+    o2 : or2  port map(a => t(2), b => t(3), y => t23);
+    o3 : or2  port map(a => t01, b => t23, y => t_any);
+    x5 : xor2 port map(a => t_any, b => '1', y => zt);
+    o4 : or2  port map(a => opa(0), b => opa(1), y => d01);
+    o5 : or2  port map(a => d01, b => opa(2), y => d_any);
+    x6 : xor2 port map(a => d_any, b => '1', y => zd);
+    a1 : and2 port map(a => zt, b => zd, y => zt_zd);
+    o6 : or2  port map(a => ts, b => zt_zd, y => ok1);
+    -- OK = Ts'  if Xs = 0,   OK = Ts + Zt.Zd  if Xs = 1
+    ok_mux : bitmux21 port map(d0 => not_ts, d1 => ok1, sel => xs, y => ok_int);
+    ok <= ok_int;
 
-    in_OK_and1 : and2 port map (
-        a => not_Xs, b => not_Ts,
-        y => or_inp1
-    );
+    sext <= a(3) & a(3) & a(3) & a(3);
+    gen_rem : for i in 0 to 3 generate
+        m1 : bitmux21 port map(d0 => r_shift(i), d1 => t(i), sel => loadT, y => rem_mux1(i));
+        m2 : bitmux21 port map(d0 => rem_mux1(i), d1 => sext(i), sel => initR, y => rem_d(i));
+    end generate gen_rem;
+    o7 : or2 port map(a => initR, b => loadT, y => rem_load1);
+    o8 : or2 port map(a => rem_load1, b => loadR, y => rem_load);
+    regR : Reg4Bit port map(clk => clk, reset => reset, load => rem_load, d => rem_d, q => rem_q);
 
-    in_OK_and2 : and2 port map (
-        a => Zt, b => Zd,
-        y => and2_out
-    );
+    addsub2 : rippleaddsub4bit port map(a => "0000", b => quo_q, sub => '1',
+        s => neg_q, cout => open, ovf => open);
+    quo_shift <= quo_q(2 downto 0) & ok_int;
+    gen_quo : for i in 0 to 3 generate
+        m3 : bitmux21 port map(d0 => quo_shift(i), d1 => neg_q(i), sel => loadNeg, y => quo_d(i));
+    end generate gen_quo;
+    o9  : or2 port map(a => shiftLQ, b => loadNeg, y => quo_load);
+    o10 : or2 port map(a => reset, b => resetQ, y => quo_reset);
+    regQ : Reg4Bit port map(clk => clk, reset => quo_reset, load => quo_load, d => quo_d, q => quo_q);
 
-    in_OK_or_int : or2 port map (
-        a => Ts, b => and2_out,
-        y => or_int
-    );
+    ctr : DownCounter4Bit port map(clk => clk, reset => reset, load => loadCtr,
+        dec => dec, d => "0011", zero => ctr_zero);
 
-    in_OK_and3 : and2 port map (
-        a => Xs, b => or_int,
-        y => or_inp2
-    );
-
-    in_OK_topOR : or2 port map (
-        a => or_inp1, b => or_inp2,
-        y => in_OK
-    );
-
-    xs_mux : bitmux21 port map (
-        d0  => Xs, d1 => opA_out(3),
-        sel => loadXs,
-        y   => Xs_inp
-    );
-
-    xs_reg : dff port map (
-        clk => clk, clr => '0', pre => '0',
-        d   => Xs_inp,
-        q   => Xs
-    );
-
-    -- Two's complement of quotient_out 
-    quotient_neg <= (quotient_out(3) xor (quotient_out(2) or quotient_out(1) or quotient_out(0))) &
-                    (quotient_out(2) xor (quotient_out(1) or quotient_out(0))) &
-                    (quotient_out(1) xor quotient_out(0)) &
-                    quotient_out(0); 
-
-    -- Shifted with serial input
-    quotient_shifted <= quotient_out(2 downto 0) & in_OK;
-
-    gen_q_inp : for i in 0 to 3 generate
-        q_inp_mux : bitmux21 port map (
-            d0  => quotient_shifted(i),
-            d1  => quotient_neg(i),
-            sel => loadNeg,
-            y   => quotient_inp(i)
-        );
-    end generate gen_q_inp;
-
-    quotient : Reg4Bit port map (
-        clk   => clk, reset => resetQ,
-        load  => loadNeg_or_shiftLQ, 
-        d     => quotient_inp,
-        q     => quotient_out
-    );
-
-    opA : ShiftRegister4Bit port map (
-        clk    => clk, reset => reset, 
-        shiftL => shiftLA, shiftR => '0',
-        load   => loadA,
-        d      => a,
-        q      => opA_out
-    );
-
-    opB : Reg4Bit port map (
-        clk   => clk, reset => reset,
-        load  => loadB, d => b, q => opB_out
-    );
-
-    rem_mux : mux31_4bit port map (
-        d0 => signExtA, d1 => r_prime, d2 => T,
-        s0 => loadR, s1 => loadT,
-        x  => rem_input
-    );
-
-    rem_reg : Reg4Bit port map (
-        clk   => clk, reset => reset,
-        load  => load_rem,
-        d     => rem_input,
-        q     => rem_out
-    );
-
-    addsub : rippleaddsub4bit port map (
-        a   => r_prime, b => opB_out, 
-        sub => Xs_xnor_opB3,
-        s   => T, ovf => V
-    );
-
-    ctr : DownCounter4Bit port map (
-        clk   => clk, reset => '0', load => loadCtr, 
-        dec   => dec, 
-        d     => "0011",
-        zero  => in_Z
-    );
+    quotient  <= quo_q;
+    remainder <= rem_q;
 end struct;
