@@ -1,3 +1,7 @@
+-- Tests alu_top with one case per operation plus the
+-- flag cases. GReset is pulsed before each case because the multiplier
+-- and divider start from S0 on reset. Each case waits 160 ns (7 GClock
+-- edges) so the divider (6 edges) has time to finish.
 entity alu_testbench is
 end alu_testbench;
 
@@ -32,8 +36,6 @@ architecture test_alu of alu_testbench is
     signal seg : bit_vector(6 downto 0);
     signal an : bit_vector(7 downto 0);
 
-    constant GCLK_PERIOD : time := 20 ns;
-
 begin
 
     uut: alu_top
@@ -52,81 +54,85 @@ begin
             an              => an
         );
 
-    -- Free-running 100 MHz clock
+    -- Free-running 100 MHz clock for the display controller
     CLK100MHZ <= not CLK100MHZ after 5 ns;
 
-    -- Free-running GClock
+    -- Free-running GClock, 20 ns period
     GClock <= not GClock after 10 ns;
 
-    -- Stimulus process
     stim_proc: process
     begin
-        -- ADD (7 + 2) -> Positive Overflow (0111 + 0010 = 1001)
+        -- ADD 7 + 2: positive overflow, MuxOut = 00001001, V = 1
         GReset          <= '1';
         OperandA        <= "0111";
         OperandB        <= "0010";
         OperationSelect <= "00";
         wait for 20 ns;
-
         GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns; 
+        wait for 160 ns;
 
-        -- SUB (5 - 5 = 0) -> ZeroOut flag test
+        -- SUB 5 - 5 = 0: MuxOut = 00000000, C = 1, Z = 1
         GReset          <= '1';
         OperandA        <= "0101";
         OperandB        <= "0101";
         OperationSelect <= "01";
         wait for 20 ns;
-
         GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns;
+        wait for 160 ns;
 
-        -- SUB (-8 - 1 = -9) -> Negative Overflow test ("1000" - "0001")
+        -- SUB -8 - 1: negative overflow, MuxOut = 00000111, C = 1, V = 1
         GReset          <= '1';
         OperandA        <= "1000";
         OperandB        <= "0001";
         OperationSelect <= "01";
         wait for 20 ns;
-
         GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns;
+        wait for 160 ns;
 
-        -- DIV (11 / 4) -> Remainder = 3 ("0011"), Quotient = 2 ("0010")
-        -- MuxOut = Remainder & Quotient -> "00110010"
-        GReset          <= '1';
-        OperandA        <= "1011";
-        OperandB        <= "0100";
-        OperationSelect <= "11";
-        wait for 20 ns;
-
-        GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns;
-
-        -- DIV (3 / 5) -> Remainder = 3, Quotient = 0 (ZeroOut on Div)
-        GReset          <= '1';
-        OperandA        <= "0011";
-        OperandB        <= "0101";
-        OperationSelect <= "11";
-        wait for 20 ns;
-
-        GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns;
-
-        -- MULT (3 * 4 = 12)
+        -- MUL 3 x 4 = 12: MuxOut = 00001100
         GReset          <= '1';
         OperandA        <= "0011";
         OperandB        <= "0100";
         OperationSelect <= "10";
         wait for 20 ns;
-
         GReset <= '0';
-        wait for 60 ns; 
-        wait for 40 ns;
+        wait for 160 ns;
+
+        -- MUL 3 x -5 = -15: MuxOut = 11110001
+        GReset          <= '1';
+        OperandA        <= "0011";
+        OperandB        <= "1011";
+        OperationSelect <= "10";
+        wait for 20 ns;
+        GReset <= '0';
+        wait for 160 ns;
+
+        -- DIV -5 / 4: quotient -1, remainder -1, MuxOut = 11111111
+        GReset          <= '1';
+        OperandA        <= "1011";
+        OperandB        <= "0100";
+        OperationSelect <= "11";
+        wait for 20 ns;
+        GReset <= '0';
+        wait for 160 ns;
+
+        -- DIV 3 / 5: quotient 0, remainder 3, MuxOut = 00110000
+        GReset          <= '1';
+        OperandA        <= "0011";
+        OperandB        <= "0101";
+        OperationSelect <= "11";
+        wait for 20 ns;
+        GReset <= '0';
+        wait for 160 ns;
+
+        -- DIV 5 / 0: divide by zero, V = 1
+        GReset          <= '1';
+        OperandA        <= "0101";
+        OperandB        <= "0000";
+        OperationSelect <= "11";
+        wait for 20 ns;
+        GReset <= '0';
+        wait for 160 ns;
 
         -- Hold idle at the end of simulation
         GReset <= '1';
