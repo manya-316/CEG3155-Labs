@@ -21,7 +21,7 @@ architecture basic of ShiftRegister8Bit is
     component mux31_1bit is
         port (
             d0, d1, d2 : in bit;
-            sel : in bit;
+            s0, s1 : in bit;
             y : out bit 
         );
     end component;
