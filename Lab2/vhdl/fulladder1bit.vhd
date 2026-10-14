@@ -1,3 +1,4 @@
+--1-bit full adder built structurally from XOR, AND and OR gates 
 entity fulladder1bit is
     port (
         a, b, cin : in bit;

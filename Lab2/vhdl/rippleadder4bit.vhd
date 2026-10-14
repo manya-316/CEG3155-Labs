@@ -1,3 +1,4 @@
+--4-bit ripple carry adder made of four 1-bit full adders
 entity rippleadder4bit is
     port (
         a, b : in bit_vector(3 downto 0);

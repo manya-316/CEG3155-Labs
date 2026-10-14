@@ -1,3 +1,4 @@
+--8-bit adder/subtractor for the multiplier's product register
 entity rippleaddsub8bit is
     port (
         a, b : in bit_vector(7 downto 0);

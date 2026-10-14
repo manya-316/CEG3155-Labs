@@ -1,3 +1,4 @@
+-- 4-bit register with load enable and asynchronous reset. Each bit is a D flip-flop whose input comes from a 2-to-1 mux
 entity Reg4bit is
     port (
         clk, reset : in bit;
