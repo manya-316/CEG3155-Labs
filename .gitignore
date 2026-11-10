@@ -1,0 +1,15 @@
+*.cache/
+*.sim/
+*.runs/
+*.hw/
+*.ip_user_files/
+.Xil/
+xsim.dir/
+*.jou
+*.log
+*.str
+*.wdb
+*.pb
+*.wpc
+*.wdf
+.DS_Store

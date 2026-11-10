@@ -1,3 +1,7 @@
+-- clk_div.vhd
+-- this entity is a clock divider, which takes an input clock
+-- and divides it into a clock output with a lower frequency
+
 entity clk_div is
     generic (N : positive := 100_000_000);
     port (

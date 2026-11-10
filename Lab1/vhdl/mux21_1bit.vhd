@@ -1,3 +1,7 @@
+-- mux21_1bit.vhd
+-- this entity is a 1-bit 2-to-1 multiplexer,
+-- where the output is either d0 or d1, depending on 'sel'
+
 entity mux21_1bit is
     port (
         d0, d1 : in bit;

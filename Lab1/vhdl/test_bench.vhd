@@ -1,3 +1,9 @@
+-- test_bench.vhd
+-- This file contains many entities, each designed
+-- to test the other entities that are part of this project.
+-- Each test entity stimulates the inputs of the entity being tested,
+-- and runs it through all of its possible states.
+
 entity tb_and2 is
 end tb_and2;
 

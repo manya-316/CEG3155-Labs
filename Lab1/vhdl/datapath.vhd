@@ -1,3 +1,9 @@
+-- datapath.vhd
+-- This is the datapath of the system.
+-- It manages the flow of data, and stores the actual state in registers.
+-- It also contains the connections between each part of the path, 
+-- allowing for transfer between registers/multiplexers/gates, etc.
+
 entity datapath is
     port (
         Clk, GReset, LoadL, LoadR, ShiftL, ShiftR, DSel1, DSel0, LoadD, ResetD : in bit;

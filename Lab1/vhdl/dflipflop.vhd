@@ -1,3 +1,8 @@
+-- dflipflop.vhd
+-- Implementation of a d-flip-flop, 
+-- allowing for one bit of data to be stored
+-- and updated on the rising edge of a clock signal.
+
 entity dflipflop is
     port (
         clk, reset, set, d : in bit;

@@ -1,3 +1,4 @@
+--2-input XOR gate
 entity xor2 is
     port (
         a, b : in bit;

@@ -1,3 +1,8 @@
+-- top.vhd
+-- This is the overall top level of this system,
+-- and implements the connection between the 
+-- control path and the data path.
+
 entity top is 
     generic (N_div : positive := 100_000_000);
     port (

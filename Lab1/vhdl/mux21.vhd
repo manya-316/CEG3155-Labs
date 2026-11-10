@@ -1,3 +1,7 @@
+-- mux21.vhd
+-- this entity is an 8-bit 2-to-1 multiplexer,
+-- where the output is either d0 or d1, depending on 'sel'
+
 entity mux21 is
     port (
         d0, d1 : in bit_vector(7 downto 0);

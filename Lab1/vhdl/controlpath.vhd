@@ -1,3 +1,8 @@
+-- controlpath.vhd
+-- This is the control path of the system. 
+-- It manages the state of the system and generates control signals,
+-- which the datapath uses to route data and update state.
+
 entity controlpath is
     port (
         GClock, GReset, L, R, Tick : in bit;

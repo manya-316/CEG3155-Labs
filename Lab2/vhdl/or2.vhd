@@ -1,3 +1,4 @@
+--2-input OR gate
 entity or2 is
     port (
         a, b : in bit;
