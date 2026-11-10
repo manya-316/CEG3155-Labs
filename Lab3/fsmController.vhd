@@ -5,17 +5,6 @@
 --                           S1 = 01  MS yellow, SS red
 --                           S2 = 11  MS red,    SS green
 --                           S3 = 10  MS red,    SS yellow
--- Transition inputs:
---   T0 = SSCS AND MSC counter done      (leave S0)
---   T1 = MS yellow timer (MT) done      (leave S1)
---   T2 = SSC counter done               (leave S2)
---   T3 = SS yellow timer (ST) done      (leave S3)
--- Next-state equations (D flip-flops):
---   Y1 = y1'.y0.T1 + y1.y0 + y1.y0'.T3'
---   Y0 = y1'.y0'.T0 + y1'.y0 + y1.y0.T2'
--- Outputs (one-hot, bit 2 = red, bit 1 = yellow, bit 0 = green):
---   MSTL(2) = y1        MSTL(1) = y1'.y0    MSTL(0) = y1'.y0'
---   SSTL(2) = y1'       SSTL(1) = y1.y0'    SSTL(0) = y1.y0
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -24,16 +13,16 @@ ENTITY fsmController IS
     PORT (
         i_clock     : IN  STD_LOGIC;
         i_resetBar  : IN  STD_LOGIC;
-        i_enable    : IN  STD_LOGIC;   -- LOAD_FSM (SW0)
-        i_greenDone : IN  STD_LOGIC;   -- shared comparator: MSC done in S0, SSC done in S2
-        i_sscs      : IN  STD_LOGIC;   -- debounced car sensor
-        i_mtDone    : IN  STD_LOGIC;   -- main street yellow timer done
-        i_stDone    : IN  STD_LOGIC;   -- side street yellow timer done
+        i_enable    : IN  STD_LOGIC;
+        i_greenDone : IN  STD_LOGIC;
+        i_sscs      : IN  STD_LOGIC;
+        i_mtDone    : IN  STD_LOGIC;
+        i_stDone    : IN  STD_LOGIC;
         o_MSTL      : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
         o_SSTL      : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
-        o_y1        : OUT STD_LOGIC;   -- state bits (y1 also drives the mux select)
+        o_y1        : OUT STD_LOGIC;
         o_y0        : OUT STD_LOGIC;
-        o_s0, o_s1, o_s2, o_s3 : OUT STD_LOGIC  -- decoded states for the datapath
+        o_s0, o_s1, o_s2, o_s3 : OUT STD_LOGIC
     );
 END fsmController;
 
