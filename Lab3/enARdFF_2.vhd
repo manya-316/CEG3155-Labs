@@ -9,7 +9,7 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY enARdFF_2 IS
     PORT (
-        i_resetBar : IN  STD_LOGIC;   -- asynchronous, active low
+        i_resetBar : IN  STD_LOGIC;
         i_d        : IN  STD_LOGIC;
         i_enable   : IN  STD_LOGIC;
         i_clock    : IN  STD_LOGIC;

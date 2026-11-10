@@ -34,25 +34,20 @@ ARCHITECTURE structural OF fsmController IS
 
     SIGNAL y1, y0, y1b, y0b : STD_LOGIC;
     SIGNAL T0, T1, T2, T3   : STD_LOGIC;
-    -- Next-state values kept in intermediate signals before the port map
-    -- (Vivado elaboration requirement noted in Section 5.1)
+
     SIGNAL int_Y1, int_Y0   : STD_LOGIC;
 BEGIN
-    -- Transition conditions
     T0 <= i_sscs AND i_greenDone;
     T1 <= i_mtDone;
     T2 <= i_greenDone;
     T3 <= i_stDone;
 
-    -- Next-state logic
     int_Y1 <= (y1b AND y0 AND T1) OR (y1 AND y0) OR (y1 AND y0b AND (NOT T3));
     int_Y0 <= (y1b AND y0b AND T0) OR (y1b AND y0) OR (y1 AND y0 AND (NOT T2));
 
-    -- State register
     stateFF1 : enARdFF_2 PORT MAP (i_resetBar, int_Y1, i_enable, i_clock, y1, y1b);
     stateFF0 : enARdFF_2 PORT MAP (i_resetBar, int_Y0, i_enable, i_clock, y0, y0b);
 
-    -- Moore outputs
     o_MSTL(2) <= y1;
     o_MSTL(1) <= y1b AND y0;
     o_MSTL(0) <= y1b AND y0b;
@@ -61,7 +56,6 @@ BEGIN
     o_SSTL(1) <= y1 AND y0b;
     o_SSTL(0) <= y1 AND y0;
 
-    -- Decoded states
     o_s0 <= y1b AND y0b;
     o_s1 <= y1b AND y0;
     o_s2 <= y1  AND y0;
