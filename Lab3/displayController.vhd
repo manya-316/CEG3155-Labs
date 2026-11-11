@@ -6,6 +6,8 @@
 -- 1.3 ms per full scan, which looks steady to the eye.
 --   AN(0) -> right digit (BCD2, ones),  AN(1) -> left digit (BCD1, tens)
 --   AN(7 downto 2) held high (off).  Anodes are active low.
+-- Segment decoding uses the course-provided dec_7seg core (R. Abielmona),
+-- whose separate active-low a..g outputs are packed into SEG(0)=a ... SEG(6)=g.
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -27,9 +29,10 @@ ARCHITECTURE structural OF displayController IS
         PORT (i_clock, i_resetBar, i_enable, i_clear : IN STD_LOGIC;
               o_count : OUT STD_LOGIC_VECTOR(N-1 DOWNTO 0));
     END COMPONENT;
-    COMPONENT sevenSegDecoder
-        PORT (i_bcd : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-              o_seg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0));
+    COMPONENT dec_7seg   -- course-provided core
+        PORT (i_hexDigit : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+              o_segment_a, o_segment_b, o_segment_c, o_segment_d, o_segment_e,
+              o_segment_f, o_segment_g : OUT STD_LOGIC);
     END COMPONENT;
     COMPONENT mux2to1N
         GENERIC (N : INTEGER := 4);
@@ -48,8 +51,19 @@ BEGIN
 
     int_sel <= int_refresh(16);
 
-    decLeft  : sevenSegDecoder PORT MAP (i_left,  int_segLeft);
-    decRight : sevenSegDecoder PORT MAP (i_right, int_segRight);
+    decLeft : dec_7seg
+        PORT MAP (i_hexDigit  => i_left,
+                  o_segment_a => int_segLeft(0), o_segment_b => int_segLeft(1),
+                  o_segment_c => int_segLeft(2), o_segment_d => int_segLeft(3),
+                  o_segment_e => int_segLeft(4), o_segment_f => int_segLeft(5),
+                  o_segment_g => int_segLeft(6));
+
+    decRight : dec_7seg
+        PORT MAP (i_hexDigit  => i_right,
+                  o_segment_a => int_segRight(0), o_segment_b => int_segRight(1),
+                  o_segment_c => int_segRight(2), o_segment_d => int_segRight(3),
+                  o_segment_e => int_segRight(4), o_segment_f => int_segRight(5),
+                  o_segment_g => int_segRight(6));
 
     -- sel = 0 -> right digit segments, sel = 1 -> left digit segments
     segMux : mux2to1N
