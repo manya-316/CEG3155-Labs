@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- binToBCD : 4-bit binary (0 to 15) to two BCD digits  (bonus)
+-- binToBCD : 4-bit binary (0 to 15) to two BCD digits
 --   tens = 1 when value >= 10  ->  tens = b3.(b2 + b1)
 --   ones = value         when tens = 0
 --        = value + 6 mod 16 (same as value - 10) when tens = 1

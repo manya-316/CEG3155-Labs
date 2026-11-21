@@ -1,13 +1,5 @@
 --------------------------------------------------------------------------------
--- debouncer : synchronizer + debouncer for the car sensor (BTNU / CAPTEUR)
--- Structural:
---   1) Two flip-flops in series synchronise the asynchronous button to the
---      100 MHz clock (avoids metastability, Section 4.2.2).
---   2) A 3-stage shift register samples the synchronised signal on every
---      100 Hz tick (every 10 ms).
---   3) The output flip-flop only changes when all three samples agree
---      (all 1 -> output 1, all 0 -> output 0), so bounces shorter than
---      ~30 ms are ignored.
+-- debouncer for the car sensor
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
