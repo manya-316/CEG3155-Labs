@@ -2,6 +2,10 @@
 -- comparatorN_gte : N-bit unsigned greater-than-or-equal comparator
 -- Structural: ripple comparison chain from LSB to MSB.
 -- o_gte = '1' when i_a >= i_b (unsigned).
+--
+-- Used twice in fsmController of the keyboard controller, with N = 4:
+--   counter >= 9  : start bit and 8 data bits are in, skip the remaining bits
+--   counter >= 11 : all 11 bits of the PS/2 frame received, back to idle
 --------------------------------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
