@@ -1,16 +1,8 @@
 --------------------------------------------------------------------------------
 -- lab4_testbenches.vhd : unit test benches for the keyboard controller (Lab 4)
---
--- One test bench per module, all in this file (simulation only):
 --   enARdFF_2_tb, comparatorN_gte_tb, dec_7seg_tb, shiftRegister_tb,
 --   counter4bit_tb, fallEdgeDetector_tb, digitalFilter_tb, fsmController_tb,
 --   sevenSegDisplay_tb
--- The test bench of the complete design is in keyboardController_tb.vhd.
---
--- To run one in Vivado: Simulation Sources, right-click the test bench you
--- want, "Set as Top", start the simulation and type "run -all". Each one
--- prints PASS / FAIL lines in the Tcl console and stops by itself.
---------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- enARdFF_2_tb : test bench for the D flip-flop with enable and async reset

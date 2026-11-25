@@ -109,14 +109,14 @@ ARCHITECTURE structural OF keyboardController IS
     END COMPONENT;
 
     SIGNAL int_resetBar      : STD_LOGIC;
-    SIGNAL int_filteredClock : STD_LOGIC;                      -- filtered keyboard clock
-    SIGNAL int_fallEdge      : STD_LOGIC;                      -- one pulse per PS/2 bit
-    SIGNAL int_count         : STD_LOGIC_VECTOR(3 DOWNTO 0);   -- bits received in this frame
-    SIGNAL int_enable        : STD_LOGIC;                      -- FSM: count one more bit
-    SIGNAL int_setCounter    : STD_LOGIC;                      -- FSM: counter back to 0
-    SIGNAL int_shift         : STD_LOGIC;                      -- FSM: shift KeyboardInfo in
-    SIGNAL int_scanCode      : STD_LOGIC_VECTOR(7 DOWNTO 0);   -- last scan-code byte
-    SIGNAL int_startBit      : STD_LOGIC;                      -- bit-bucket contents
+    SIGNAL int_filteredClock : STD_LOGIC;
+    SIGNAL int_fallEdge      : STD_LOGIC;
+    SIGNAL int_count         : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL int_enable        : STD_LOGIC;
+    SIGNAL int_setCounter    : STD_LOGIC;
+    SIGNAL int_shift         : STD_LOGIC;
+    SIGNAL int_scanCode      : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL int_startBit      : STD_LOGIC;
 BEGIN
     -- CPU_RESETN is active low, same polarity as the flip-flop resets
     int_resetBar <= GReset;
