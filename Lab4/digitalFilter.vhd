@@ -48,11 +48,11 @@ ARCHITECTURE structural OF digitalFilter IS
               o_q, o_qBar : OUT STD_LOGIC);
     END COMPONENT;
 
-    SIGNAL int_hc    : STD_LOGIC_VECTOR(7 DOWNTO 0);   -- last 8 samples (HC[7..0])
+    SIGNAL int_hc    : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL int_set   : STD_LOGIC;
     SIGNAL int_reset : STD_LOGIC;
-    SIGNAL int_srD   : STD_LOGIC;                      -- SR flip-flop next value
-    SIGNAL int_srQ   : STD_LOGIC;                      -- SR flip-flop output
+    SIGNAL int_srD   : STD_LOGIC;
+    SIGNAL int_srQ   : STD_LOGIC;
 BEGIN
     -- 1. sampling window, shifts on every global clock edge
     sampleReg : shiftRegister

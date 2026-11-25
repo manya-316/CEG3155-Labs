@@ -16,8 +16,8 @@ ENTITY fallEdgeDetector IS
     PORT (
         i_clock    : IN  STD_LOGIC;
         i_resetBar : IN  STD_LOGIC;
-        i_signal   : IN  STD_LOGIC;   -- filtered keyboard clock
-        o_fallEdge : OUT STD_LOGIC    -- one-clock-wide pulse on each falling edge
+        i_signal   : IN  STD_LOGIC;
+        o_fallEdge : OUT STD_LOGIC
     );
 END fallEdgeDetector;
 
@@ -27,7 +27,7 @@ ARCHITECTURE structural OF fallEdgeDetector IS
               o_q, o_qBar : OUT STD_LOGIC);
     END COMPONENT;
 
-    SIGNAL int_previous : STD_LOGIC;   -- i_signal delayed by one clock
+    SIGNAL int_previous : STD_LOGIC;
 BEGIN
     previousFF : enARdFF_2
         PORT MAP (

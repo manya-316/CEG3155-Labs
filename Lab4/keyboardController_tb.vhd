@@ -94,19 +94,19 @@ BEGIN
             END LOOP;
 
             -- frame(0) goes out first
-            frame(0)          := '0';      -- start bit
-            frame(8 DOWNTO 1) := byte;     -- D0 first, D7 last
+            frame(0)          := '0';
+            frame(8 DOWNTO 1) := byte;
             frame(9)          := parity;
-            frame(10)         := '1';      -- stop bit
+            frame(10)         := '1';
 
             FOR i IN 0 TO 10 LOOP
                 tb_ps2Data <= frame(i);
                 WAIT FOR PS2_HALF / 2;
 
-                tb_ps2Clk <= '0';          -- falling edge: controller reads the bit
+                tb_ps2Clk <= '0';
                 IF noisy THEN
                     WAIT FOR PS2_HALF / 2;
-                    tb_ps2Clk <= '1';      -- reflection during the low phase
+                    tb_ps2Clk <= '1';
                     WAIT FOR GLITCH;
                     tb_ps2Clk <= '0';
                     WAIT FOR PS2_HALF / 2 - GLITCH;
@@ -117,7 +117,7 @@ BEGIN
                 tb_ps2Clk <= '1';
                 IF noisy THEN
                     WAIT FOR PS2_HALF / 4;
-                    tb_ps2Clk <= '0';      -- glitch during the high phase
+                    tb_ps2Clk <= '0';
                     WAIT FOR GLITCH;
                     tb_ps2Clk <= '1';
                     WAIT FOR PS2_HALF / 4 - GLITCH;
@@ -126,8 +126,8 @@ BEGIN
                 END IF;
             END LOOP;
 
-            tb_ps2Data <= '1';             -- line back to idle
-            WAIT FOR 4 * PS2_HALF;         -- gap before the next frame
+            tb_ps2Data <= '1';
+            WAIT FOR 4 * PS2_HALF;
         END PROCEDURE sendByte;
 
         -- Compares the displayed byte with the expected scan code
